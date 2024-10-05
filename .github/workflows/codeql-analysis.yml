@@ -1,0 +1,36 @@
+name: "CodeQL Analysis"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly scan at 00:00 UTC on Sundays
+
+jobs:
+  analyze:
+    name: Analyze code for vulnerabilities
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      security-events: write
+    strategy:
+      matrix:
+        language: [ 'javascript' ]  # The language(s) to analyze
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: Autobuild
+      run: |
+        npm install
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+
